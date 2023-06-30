@@ -63,6 +63,16 @@
     {% block scripts %}
     <!-- Optional JavaScript -->
     {{ bootstrap.load_js() }}
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+    <script>
+        var app = new Vue({
+            el: '#app',
+            delimiters: ['[[', ']]'],  // Change the delimiters
+            data: {
+                message: 'Hello Vue!'
+            }
+        })
+    </script>
 
     {% endblock %}
 </body>

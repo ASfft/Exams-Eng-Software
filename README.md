@@ -4,9 +4,50 @@
 
 O Sistema de Exames Online é um projeto desenvolvido para permitir que professores criem exames e estudantes realizem exames de forma online, proporcionando uma experiência amigável e eficiente. O sistema é projetado para ser intuitivo e responsivo, adaptando-se a diferentes dispositivos para oferecer uma experiência consistente.
 
-## Como Executar
+## 🚀 Getting Started
 
-1. Clone o repositório para a sua máquina local usando `https://github.com/<seu-username>/sistema-exames-online.git`
-2. Navegue até a pasta do projeto.
-3. Instale as dependências do projeto usando o comando `npm install`.
-4. Crie um arquivo `.env` na raiz do projeto e preencha as variáveis de ambiente necessárias (veja o arquivo `.env.example` para referência).
+Clone the project repository from Gitlab
+  ```sh
+  git clone git@github.com:ASfft/Exams-Eng-Software.git
+  ```
+Check **Usage** section to handle the project.
+
+### 📋 Prerequisites
+
+* Python 3.10
+* [Poetry](https://python-poetry.org/docs/)
+
+### 🔧 Installation
+
+After cloning the project and installing all prerequisites.
+
+* Create a virtual environment
+
+* Check if poetry is using your own virtual environment:
+  ```bash
+    poetry env system
+  ```
+* In case poetry is not pointing to correct python path, just update the poetry
+  ```bash
+    poetry env use system 
+  ```
+* Install poetry dependencies:
+
+  ```bash
+    poetry install
+  ```
+
+## 📦 Usage
+
+* Initialize database
+  ```sh
+    ./manage.py start_db
+  ```
+* Run application
+  ```sh
+    python run.py
+  ```
+  or
+  ```sh
+    flask --app app.wsgi run
+  ```

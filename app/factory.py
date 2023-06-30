@@ -1,5 +1,6 @@
 import os
 from flask import Flask, render_template
+from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_bootstrap import Bootstrap5
@@ -11,6 +12,7 @@ login_manager.session_protection = "strong"
 login_manager.login_view = "login"
 login_manager.login_message_category = "info"
 db = SQLAlchemy()
+migrate = Migrate()
 bootstrap = Bootstrap5()
 
 
@@ -26,6 +28,7 @@ def create_app():
     # init extensions
     login_manager.init_app(app)
     db.init_app(app)
+    migrate.init_app(app, db)
     bootstrap.init_app(app)
 
     from .auth.loaders import load_user
@@ -33,22 +36,17 @@ def create_app():
     from .auth.controller import bp as bp_auth
     app.register_blueprint(bp_auth, url_prefix=f"/{bp_auth.name}")
 
+    """
+    404 Page not found error default handler
+    """
+
+    @app.errorhandler(404)
+    def page_not_found(e):
+        return render_template("error/404.jinja2", error=e), 404
+
+    @app.route("/")
+    @app.route("/home")
+    def home():
+        return render_template("index.jinja2")
+
     return app
-
-
-app = create_app()
-
-"""
-404 Page not found error default handler
-"""
-
-
-@app.errorhandler(404)
-def page_not_found(e):
-    return render_template("error/404.jinja2", error=e), 404
-
-
-@app.route("/")
-@app.route("/home")
-def home():
-    return render_template("index.jinja2")
