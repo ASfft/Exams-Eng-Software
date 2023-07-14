@@ -10,6 +10,7 @@ from app.factory import create_app, db
 def start_db():
     app = create_app()
     app.app_context().push()
+    db.drop_all()
     db.create_all()
     print("Database started successfully.")
 

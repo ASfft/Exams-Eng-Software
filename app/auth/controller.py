@@ -18,11 +18,11 @@ def register():
         if user:
             flash('That username is taken. Please choose a different one.', 'danger')
         else:
-            user = User(username=form.username.data, password=form.password.data)
+            user = User(username=form.username.data, password=form.password.data, user_type_id=form.user_type.data)
             db.session.add(user)
             db.session.commit()
             flash('Your account has been created! You are now able to log in', 'success')
-            return redirect(url_for('auth/login'))
+            return redirect(url_for('auth.login'))
     return render_template('auth/register.jinja2', title='Register', form=form)
 
 
