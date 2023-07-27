@@ -5,17 +5,14 @@ import subprocess
 import click
 
 from app.factory import create_app, db
+from app.initialize import initialize_database
 
 
-def start_db():
-    app = create_app()
-    app.app_context().push()
-    db.drop_all()
-    db.create_all()
-    print("Database started successfully.")
+def initialize():
+    initialize_database()
 
 
-operations = {"start_db": start_db}
+operations = {"initialize": initialize}
 
 
 @click.command()

@@ -1,0 +1,32 @@
+{% extends "base.jinja2" %}
+{% block scripts %}
+    {{ bootstrap.load_js() }}
+    <script src="https://unpkg.com/vue@2.6.12/dist/vue.js"></script>
+    <script src="{{ url_for('static', filename='exam.js') }}"></script>
+    <script src="{{ url_for('static', filename='result.js') }}"></script>
+
+    <!-- Initialize Vue -->
+    <script>
+        var app = new Vue({
+            el: '#app'
+        });
+    </script>
+{% endblock scripts %}
+
+{% block content %}
+    <div id="app" class="d-flex justify-content-center align-items-center vh-100">
+        <div class="card">
+            <div class="card-body">
+                {% if exam.has_ended() %}
+                    {% set exam_result = exam.grade(current_user.id) %}
+                    <p>Your grade is: {{ exam_result.grade }} out of {{ exam_result.total }}</p>
+                    <result-component initial-questions='{{ questions|tojson }}' initial-answers='{{ answers|tojson }}' exam-id='{{ exam.id }}'></result-component>
+                {% else %}
+                    <exam-component initial-questions='{{ questions|tojson }}' initial-answers='{{ answers|tojson }}' time-limit={{ time_left }} exam-id='{{ exam.id }}'></exam-component>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+

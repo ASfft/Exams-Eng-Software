@@ -8,42 +8,51 @@ from app.models import User
 bp = Blueprint("auth", __name__)
 
 
-@bp.route("/register", methods=['GET', 'POST'])
+@bp.route("/register", methods=["GET", "POST"])
 def register():
     if current_user.is_authenticated:
-        return redirect(url_for('home'))
+        return redirect(url_for("exams.search"))
     form = RegistrationForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         if user:
-            flash('That username is taken. Please choose a different one.', 'danger')
+            flash("That username is taken. Please choose a different one.", "danger")
         else:
-            user = User(username=form.username.data, password=form.password.data, user_type_id=form.user_type.data)
+            user = User(
+                username=form.username.data,
+                password=form.password.data,
+                user_type_id=form.user_type.data,
+            )
             db.session.add(user)
             db.session.commit()
-            flash('Your account has been created! You are now able to log in', 'success')
-            return redirect(url_for('auth.login'))
-    return render_template('auth/register.jinja2', title='Register', form=form)
+            flash(
+                "Your account has been created! You are now able to log in", "success"
+            )
+            return redirect(url_for("auth.login"))
+    return render_template("auth/register.jinja2", title="Register", form=form)
 
 
-@bp.route("/login", methods=['GET', 'POST'])
+@bp.route("/login", methods=["GET", "POST"])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('home'))
+        return redirect(url_for("exams.search"))
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
-        if user and user.password == form.password.data:  # You should check the hashed password
+        if (
+            user and user.password == form.password.data
+        ):  # You should check the hashed password
             login_user(user)
-            next_page = request.args.get('next')
-            return redirect(next_page) if next_page else redirect(url_for('home'))
+            next_page = request.args.get("next")
+            return (
+                redirect(next_page) if next_page else redirect(url_for("exams.search"))
+            )
         else:
-            flash('Login Unsuccessful. Please check username and password', 'danger')
-    return render_template('auth/login.jinja2', title='Login', form=form)
+            flash("Login Unsuccessful. Please check username and password", "danger")
+    return render_template("auth/login.jinja2", title="Login", form=form)
 
 
 @bp.route("/logout")
 def logout():
     logout_user()
-    return redirect(url_for('home'))
-
+    return redirect(url_for("home"))

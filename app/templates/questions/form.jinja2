@@ -1,0 +1,68 @@
+{% extends "base.jinja2" %}
+
+{% block scripts %}
+    {{ super() }}
+    <script src="https://unpkg.com/vue@2.6.12/dist/vue.js"></script>
+    <script src="{{ url_for('static', filename='components.js') }}"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                question_type: '{{ form.question_type.data.id if form.question_type.data is not none else "" }}',
+                text: '{{ form.text.data if form.text.data is not none else "" }}',
+                data: {{ (form.data.data if form.data.data is not none else {})|tojson }},
+            },
+            methods: {
+                submitForm: async function(event) {
+                    const isUpdate = '{{ is_update }}' === "True"
+                    const url = isUpdate ? '{{ question_id }}' : 'add';
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            text: this.text,
+                            question_type: this.question_type,
+                            data: this.data,
+                            csrf_token: document.querySelector('#csrf').value
+                        }),
+                    });
+
+                    if (!response.ok) {
+                        const message = `An error has occurred: ${response.status}`;
+                        throw new Error(message);
+                    }
+                },
+            },
+        });
+    </script>
+{% endblock scripts %}
+
+{% block content %}
+    <div id="app" class="container">
+        <form @submit.prevent="submitForm">
+            <input id="csrf" type="hidden" name="csrf_token" value="{{ form.csrf_token._value() }}">
+            <div class="form-group">
+                <label for="text">Text</label>
+                <textarea id="text" v-model="text" class="form-control"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="question_type">Question Type</label>
+                <select id="question_type" v-model="question_type" class="form-control">
+                    <option disabled value="">Please select one</option>
+                    <option value=1>Multiple Choice</option>
+                    <option value=2>True/False</option>
+                    <option value=3>Numeric</option>
+                </select>
+            </div>
+
+            <multiple-choice-component v-if="question_type === '1'" :data.sync="data" :initial="data"></multiple-choice-component>
+            <true-false-component v-if="question_type === '2'" :data.sync="data" :initial="data"></true-false-component>
+            <numeric-component v-if="question_type === '3'" :data.sync="data" :initial="data"></numeric-component>
+
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+{% endblock content %}

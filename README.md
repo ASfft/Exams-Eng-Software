@@ -41,7 +41,7 @@ After cloning the project and installing all prerequisites.
 
 * Initialize database
   ```sh
-    ./manage.py start_db
+    ./manage.py initialize
   ```
 * Run application
   ```sh

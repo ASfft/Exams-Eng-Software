@@ -1,0 +1,13 @@
+{% extends "base.jinja2" %}
+
+{% block content %}
+    <div class="container">
+        <h2>Question Details</h2>
+        <p>{{ question.json }}</p>
+        <a href="{{ url_for('questions.update', question_id=question.id) }}" class="btn btn-warning">Edit</a>
+        <form method="POST" action="{{ url_for('questions.delete', question_id=question.id) }}">
+            {{ form.hidden_tag() }}
+            <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+    </div>
+{% endblock %}

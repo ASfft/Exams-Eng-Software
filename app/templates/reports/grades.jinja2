@@ -1,0 +1,25 @@
+{% extends 'base.jinja2' %}
+{% block content %}
+    <h2>Exam Grades Report for: {{ exam.title }}</h2>
+    <a href="{{ url_for('reports.report_answers', exam_id=exam.id) }}" class="btn btn-primary">View Answers Report</a>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Student</th>
+            <th scope="col">Grade</th>
+            <th scope="col">Total</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for student, grade in grades %}
+            <tr>
+                <th scope="row">{{ loop.index }}</th>
+                <td>{{ student.name }}</td>
+                <td>{{ grade.grade }}</td>
+                <td>{{ grade.total }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

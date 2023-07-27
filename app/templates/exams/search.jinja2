@@ -1,0 +1,41 @@
+{% extends "base.jinja2" %}
+
+{% block content %}
+    <div class="container">
+        <h2>Search Exam</h2>
+        <form method="POST">
+            {{ form.hidden_tag() }}
+            <div class="row">
+                <div class="col-auto form-group">
+                    {{ form.title(class="form-control") }}
+                </div>
+                <div class="col-auto form-group">
+                    {{ form.submit(class="btn btn-primary") }}
+                </div>
+                {% if current_user.is_professor() %}
+                    <div class="col-auto form-group">
+                        <a href="{{ url_for('exams.add') }}" class="btn btn-success">Create Exam</a>
+                    </div>
+                {% endif %}
+            </div>
+        </form>
+
+        {% if exams %}
+            <br/>
+            {% for exam in exams %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ exam.title }}</h5>
+                        {% if exam.has_ended() and current_user.is_student() %}
+                            <p class="card-subtitle mb-2">{{ exam.grade_as_string(current_user.id) }}</p>
+                        {% endif %}
+                        {% if current_user.is_professor() %}
+                            <a href="{{ url_for('exams.update_questions', exam_id=exam.id) }}" class="btn btn-primary">Update Questions</a>
+                        {% endif %}
+                        <a href="{{ url_for('exams.details', exam_id=exam.id) }}" class="btn btn-primary">View Exam</a>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+{% endblock %}

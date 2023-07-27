@@ -1,80 +1,74 @@
 {% from 'bootstrap5/utils.html' import render_messages %}
 {% from 'bootstrap5/form.html' import render_form %}
 {% from 'bootstrap5/nav.html' import render_nav_item, render_breadcrumb_item %}
-<!doctype html>
-<html lang="en">
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-{#    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">#}
-    {% block head %}
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    {% block styles %}
-    <!-- Bootstrap CSS -->
-    {{ bootstrap.load_css() }}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
-    {% endblock %}
+{% block doc -%}
+    <!DOCTYPE html>
+    <html{% block html_attribs %}{% endblock html_attribs %}>
+    {%- block html %}
+        <head>
+            {%- block head %}
+                <title>Online Exams</title>
 
-    <title>Your page title</title>
-    {% endblock %}
-</head>
+                {%- block metas %}
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+                {%- endblock metas %}
 
-<body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
-        <div class="container">
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-                aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav mr-auto">
-{#                    {{ render_nav_item('main.index', 'Home') }}#}
-{#                    {{ render_nav_item('movies.index', 'Movies') }}#}
-{#                    {% if current_user.is_authenticated %}#}
-{#                    {{ render_nav_item('users.index', 'Users' ) }}#}
-{#                    {{ render_nav_item('auth.profile', current_user.username ) }}#}
-{#                    {{ render_nav_item('auth.logout', 'Logout') }}#}
-{#                    {% else %}#}
-{#                    {{ render_nav_item('auth.login', 'Login') }}#}
-{#                    {% endif %}#}
-                </ul>
-            </div>
-        </div>
-    </nav>
-    <main class="container">
-        {{ render_messages(container=False, dismissible=True, dismiss_animate=True) }}
-        <!-- Your page content -->
-        {% block content %}{% endblock %}
-    </main>
+                {%- block styles %}
+                    <!-- Bootstrap CSS -->
+                    {{ bootstrap.load_css() }}
+                    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+                {%- endblock styles %}
+            {%- endblock head %}
+        </head>
+        <body{% block body_attribs %}{% endblock body_attribs %}>
+        {%- block body %}
+            {% if current_user.is_authenticated %}
+                <div class="navbar navbar-expand-lg navbar-light bg-light">
+                    <a class="navbar-brand" href="{{ url_for('home') }}">Online Exams</a>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav mr-auto">
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('exams.search') }}">Exams</a>
+                            </li>
+                            {% if current_user.is_professor() %}
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ url_for('questions.search') }}">Questions</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                        <ul class="navbar-nav ml-auto">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-user"></i> {{ current_user.username }}
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+                                    <a class="dropdown-item" href="{{ url_for('auth.logout') }}">Log Out</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="container">
+                            {{ render_messages(messages) }}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+            {% endif %}
+            {% block content -%}
+            {%- endblock content %}
 
-    <footer class="text-center">
-        {% block footer %}
-        <small> &copy; 2023–
-            <script>document.write(new Date().getFullYear())</script> <a
-                href="https://github.com/gabrielsr">gabrielsr</a>
-        </small>
-        {% endblock %}
-    </footer>
-
-    {% block scripts %}
-    <!-- Optional JavaScript -->
-    {{ bootstrap.load_js() }}
-    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
-    <script>
-        var app = new Vue({
-            el: '#app',
-            delimiters: ['[[', ']]'],  // Change the delimiters
-            data: {
-                message: 'Hello Vue!'
-            }
-        })
-    </script>
-
-    {% endblock %}
-</body>
-
-</html>
+            {% block scripts %}
+                <!-- Optional JavaScript -->
+                {{ bootstrap.load_js() }}
+            {%- endblock scripts %}
+        {%- endblock body %}
+        </body>
+    {%- endblock html %}
+    </html>
+{% endblock doc -%}

@@ -1,0 +1,22 @@
+{% extends "base.jinja2" %}
+
+{% block content %}
+    <div class="container">
+        <h2>{{ exam.title }}</h2>
+        <p>Start Date: {{ exam.start_date.strftime('%B %d, %Y %H:%M') }}</p>
+        <p>Duration: {{ exam.duration }} minutes</p>
+
+        {% if current_user.is_student() %}
+            {% if exam.start_date > current_time %}
+                <button class="btn btn-primary" disabled>Start Exam</button>
+            {% elif exam.has_ended() %}
+                <a href="{{ url_for('exams.view_exam', exam_id=exam.id) }}" class="btn btn-primary">See Results</a>
+            {% else %}
+                <a href="{{ url_for('exams.view_exam', exam_id=exam.id) }}" class="btn btn-primary">Start Exam</a>
+            {% endif %}
+        {% else %}
+            <a href="{{ url_for('reports.report_answers', exam_id=exam.id) }}" class="btn btn-primary">View Answers Report</a>
+            <a href="{{ url_for('reports.report_grades', exam_id=exam.id) }}" class="btn btn-primary">View Grades Report</a>
+        {% endif %}
+    </div>
+{% endblock %}

@@ -13,7 +13,6 @@ login_manager.login_view = "login"
 login_manager.login_message_category = "info"
 db = SQLAlchemy()
 migrate = Migrate()
-bootstrap = Bootstrap5()
 
 
 def create_app():
@@ -27,14 +26,22 @@ def create_app():
 
     # init extensions
     login_manager.init_app(app)
+    login_manager.login_view = "auth.login"
     db.init_app(app)
     migrate.init_app(app, db)
-    bootstrap.init_app(app)
+    bootstrap = Bootstrap5(app)
 
     from .auth.loaders import load_user
 
     from .auth.controller import bp as bp_auth
+    from .exams.controller import bp as bp_exams
+    from .questions.controller import bp as bp_questions
+    from .reports.controller import bp as bp_reports
+
     app.register_blueprint(bp_auth, url_prefix=f"/{bp_auth.name}")
+    app.register_blueprint(bp_exams, url_prefix=f"/{bp_exams.name}")
+    app.register_blueprint(bp_questions, url_prefix=f"/{bp_questions.name}")
+    app.register_blueprint(bp_reports, url_prefix=f"/{bp_reports.name}")
 
     """
     404 Page not found error default handler
@@ -47,6 +54,6 @@ def create_app():
     @app.route("/")
     @app.route("/home")
     def home():
-        return render_template("index.jinja2")
+        return redirect(url_for("auth.login"))
 
     return app
